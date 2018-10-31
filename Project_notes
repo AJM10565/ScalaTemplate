@@ -1,6 +1,6 @@
 Project 3a Work Plan
 --------------------
-Part 1 - Extend the ast.scala:
+Part 1a - Extend the ast.scala:
 main/scala
 We need to augment ast.scala with the following additional types:
 factor ::= ident | ...
@@ -10,7 +10,7 @@ conditional ::= "if" "(" expression ")" block [ "else" block ]
 loop        ::= "while" "(" expression ")" block
 block       ::= "{" statement* "}"
 
-Part 2 - Extend the CombinatorParser.scala
+Part 1b - Extend the CombinatorParser.scala
 main/scala
 "Modify the top-level one to start with statement* (zero or more statements,
 same as a block without curly braces) instead of expression."
@@ -20,7 +20,7 @@ test/scala
 Add tests for your parser including concrete syntax for at least all your existing examples
 and test fixtures as well as examples such as the ones below.
 
-Part 3 - Expand the Unparser starting with the easy cases and going to the hard ones
+Part 2 - Expand the Unparser starting with the easy cases and going to the hard ones
 test/scala
 Write test cases for the unparser first.
 main/scala
