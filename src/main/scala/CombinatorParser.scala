@@ -5,28 +5,57 @@ import ast._
 
 object CombinatorParser extends JavaTokenParsers {
 
+  /** Assignment ::= ident "=" expression ";" */
+  def assignment: Parser[Expr] =
+    ident ~ "=" ~expr ~ ";" ^^ {
+      case l ~ "=" ~ r ~ ";" => Assignment(l,r)
+    } // How do we not identify if as an ident?
+
+  def block: Parser[Expr] =
+    "{" ~! statement ~! "}" ^^ {
+      case "{" ~! s ~! "}" => Block(s)
+        // Not really sure if we need Statement@_* or rep1(Statement) or
+      // something else to represent the group of statements in a block
+    }
+
+  def conditional: Parser[Expr]=
+    "if" 
+
+
+
+
+
+
   /** expr ::= term { { "+" | "-" } term }* */
-  def expr: Parser[Expr] =
-    term ~! opt(("+" | "-") ~ term) ^^ {
-      case l ~ None          => l
-      case l ~ Some("+" ~ r) => Plus(l, r)
-      case l ~ Some("-" ~ r) => Minus(l, r)
+  def expr: Parser[Expr] = // use rep and seq
+    term ~! rep(("+" | "-"|"=") ~ term) ^^ {
+      case l        => l
+      case l ~ "+" ~ r => Plus(l, r)
+      case l ~ "-" ~ r => Minus(l, r)
+
     }
 
   /** term ::= factor { { "*" | "/" | "%" } factor }* */
   def term: Parser[Expr] =
-    factor ~! opt(("*" | "/" | "%") ~ factor) ^^ {
-      case l ~ None          => l
-      case l ~ Some("*" ~ r) => Times(l, r)
-      case l ~ Some("/" ~ r) => Div(l, r)
-      case l ~ Some("%" ~ r) => Mod(l, r)
+    factor ~! rep(("*" | "/" | "%") ~ factor) ^^ {
+      case l           => l
+      case l ~"*" ~ r => Times(l, r)
+      case l ~ "/" ~ r => Div(l, r)
+      case l ~ "%" ~ r => Mod(l, r)
     }
 
-  /** factor ::= wholeNumber | "+" factor | "-" factor | "(" expr ")" */
+  /** factor ::= wholeNumber   |"+" factor | "-" factor | "(" expr ")" */
   def factor: Parser[Expr] = (
     wholeNumber ^^ { case s => Constant(s.toInt) }
+    | ident ~> factor  ^^ {case s => String_Expr(s.toString)}
     | "+" ~> factor ^^ { case e => e }
     | "-" ~> factor ^^ { case e => UMinus(e) }
     | "(" ~ expr ~ ")" ^^ { case _ ~ e ~ _ => e }
   )
+
+
+
+
+
+
 }
