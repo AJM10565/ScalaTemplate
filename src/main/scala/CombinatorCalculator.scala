@@ -12,8 +12,9 @@ object CombinatorCalculator extends App {
       val expr = result.get
       println("The parsed expression is: ")
       println(toFormattedString(expr))
+
       println("It has size " + size(expr) + " and height " + height(expr))
-      println("It evaluates to " + evaluate(expr))
+//      println("It evaluates to " + evaluate(expr))
     }
   }
 

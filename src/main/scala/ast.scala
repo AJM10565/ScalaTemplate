@@ -17,9 +17,7 @@ case class Assignment(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Loop(left: Expr, right: Expr) extends BinaryExpr(left, right)
 
 abstract class TrinaryExpr(left: Expr, center: Expr, right: Expr) extends Expr { require { (left != null) && (center != null) } }
-case class Conditional(left: Expr, center: Expr, right: Expr) extends TrinaryExpr(left,center,right)
+case class Conditional(left: Expr, center: Expr, right: Expr) extends TrinaryExpr(left, center, right)
 
-
-
-abstract class iterExpr(items: Expr*) extends Expr { require(items != null, "Error: some shapes are null in this group") }
+abstract class iterExpr(items: Expr*) extends Expr { require(items != null) }
 case class Block(items: Expr*) extends iterExpr(items: _*)

@@ -6,7 +6,7 @@ import edu.luc.cs.laufer.cs473.expressions.CombinatorParser.rep
 
 object CombinatorParser extends JavaTokenParsers {
   def toplevel: Parser[Expr] =
-  rep1(statement) ^^ { case a => Block(a:_*) }
+    rep1(statement) ^^ { case a => Block(a: _*) }
 
   /** assignment  ::= ident "=" expression ";"*/
   def assignment: Parser[Expr] =
@@ -16,17 +16,16 @@ object CombinatorParser extends JavaTokenParsers {
   /** block ::= "{" statement* "}" */
   def block: Parser[Expr] =
     "{" ~ rep(statement) ~ "}" ^^ {
-      case "{" ~ s ~ "}" => Block(s:_*)
+      case "{" ~ s ~ "}" => Block(s: _*)
       // TODO Q2: Not really sure if we need Statement@_* or rep1(Statement) or something else to represent the group of statements in a block
     }
   // TODO Q3 when to use !~ and when to use ~
   /** conditional ::= "if" "(" expression ")" block [ "else" block ]*/
   def conditional: Parser[Expr] =
     "if" ~ "(" ~ expr ~ ")" ~ block ~! opt("else" ~ block) ^^ {
-//      case _ e _ b1 => Conditional(e,b1)
-      case "if" ~ "(" ~ e ~ ")" ~ b1 ~ None     => Conditional(e, b1, Block())
+      case "if" ~ "(" ~ e ~ ")" ~ b1 ~ None              => Conditional(e, b1, Block())
       case "if" ~ "(" ~ e ~ ")" ~ b1 ~ Some("else" ~ b2) => Conditional(e, b1, b2)
-    }  // TODO Line 24 ~! b1 no error or ~ b1 with error
+    } // TODO Line 24 ~! b1 no error or ~ b1 with error
   /** loop  ::= "while" "(" expression ")" block */
   def loop: Parser[Expr] =
     "while" ~! "(" ~ expr ~ ")" ~ block ^^ {
@@ -35,7 +34,7 @@ object CombinatorParser extends JavaTokenParsers {
   // b) Type mismatch, Expected: Expr, actual: any
   /** statement   ::= expression ";" | assignment | conditional | loop | block */
   def statement: Parser[Expr] = (
-    expr ~ ";" ^^ { case thing ~  _ => thing }
+    expr ~ ";" ^^ { case thing ~ _ => thing }
     | assignment
     | conditional
     | loop
@@ -50,24 +49,25 @@ object CombinatorParser extends JavaTokenParsers {
     | "(" ~ expr ~ ")" ^^ { case _ ~ e ~ _ => e }
   )
 
-
   /** expr ::= term { { "+" | "-" } term }* */
   def expr: Parser[Expr] = // use rep and seq
-    term ~! rep(("+" | "-" ) ~ term) ^^ {
-      case l ~ es   => es.foldLeft(l){case (r,e) => e match {
-        case "+" ~ e1 =>  Plus(r,e1)
-        case "-" ~ e1 =>  Minus(r,e1)
-      }
+    term ~! rep(("+" | "-") ~ term) ^^ {
+      case l ~ es => es.foldLeft(l) {
+        case (r, e) => e match {
+          case "+" ~ e1 => Plus(r, e1)
+          case "-" ~ e1 => Minus(r, e1)
+        }
       }
     }
 
   /** term ::= factor { { "*" | "/" | "%" } factor }* */
   def term: Parser[Expr] =
     factor ~! rep(("*" | "/" | "%") ~ factor) ^^ {
-      case l  ~ es  => es.foldLeft(l){ case (r, e) => e match {
-        case "*" ~ e1 => Times(r, e1)
-        case "/" ~ e1 => Div(r,e1)
-        case  "%" ~ e1 => Mod(r,e1)
+      case l ~ es => es.foldLeft(l) {
+        case (r, e) => e match {
+          case "*" ~ e1 => Times(r, e1)
+          case "/" ~ e1 => Div(r, e1)
+          case "%" ~ e1 => Mod(r, e1)
         }
       }
     }

@@ -14,7 +14,7 @@ object behaviors {
     case Mod(l, r)   => evaluate(l) % evaluate(r)
   }
 
-  def size(e: Expr): Int = e match {
+  def size(e: Expr): Int = e match { // number of any type of nodes
     case Constant(c) => 1
     case UMinus(r)   => 1 + size(r)
     case Plus(l, r)  => 1 + size(l) + size(r)
@@ -24,7 +24,7 @@ object behaviors {
     case Mod(l, r)   => 1 + size(l) + size(r)
   }
 
-  def height(e: Expr): Int = e match {
+  def height(e: Expr): Int = e match { // how tall is the tree
     case Constant(c) => 1
     case UMinus(r)   => 1 + height(r)
     case Plus(l, r)  => 1 + math.max(height(l), height(r))
@@ -36,15 +36,36 @@ object behaviors {
 
   def toFormattedString(prefix: String)(e: Expr): String = e match {
     case Constant(c) => prefix + c.toString
+    case Variable(value) => prefix + value
     case UMinus(r)   => buildUnaryExprString(prefix, "UMinus", toFormattedString(prefix + INDENT)(r))
     case Plus(l, r)  => buildExprString(prefix, "Plus", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Minus(l, r) => buildExprString(prefix, "Minus", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Times(l, r) => buildExprString(prefix, "Times", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Div(l, r)   => buildExprString(prefix, "Div", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
     case Mod(l, r)   => buildExprString(prefix, "Mod", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
+    case Assignment(l,r) => buildExprString(prefix, "Assignment", toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
+    case Loop(l,r) => buildExprString(prefix, "Loop",toFormattedString(prefix + INDENT)(l), toFormattedString(prefix + INDENT)(r))
+    case Conditional(l,c,r)=>  buildtriExprString(prefix, "Conditional",toFormattedString(prefix + INDENT)(c), toFormattedString(prefix + INDENT)(l),toFormattedString(prefix + INDENT)(r))
+    case Block(strings@_*)  => build_infinite_ExprString(prefix,strings.map(s=>s.toString))
   }
 
   def toFormattedString(e: Expr): String = toFormattedString("")(e)
+
+  def build_infinite_ExprString(prefix: String, nodeStrings: Seq[String]) = {
+    val result = new StringBuilder(prefix)
+    nodeStrings
+    result.append(nodeString)
+    result.append("(")
+    result.append(EOL)
+    result.append(leftString)
+    result.append(", ")
+    result.append(EOL)
+    result.append(rightString)
+    result.append(")")
+    result.toString
+  }
+
+
 
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String) = {
     val result = new StringBuilder(prefix)
@@ -52,6 +73,21 @@ object behaviors {
     result.append("(")
     result.append(EOL)
     result.append(leftString)
+    result.append(", ")
+    result.append(EOL)
+    result.append(rightString)
+    result.append(")")
+    result.toString
+  }
+  def buildtriExprString(prefix: String, nodeString: String, leftString: String,centerString:String, rightString: String) = {
+    val result = new StringBuilder(prefix)
+    result.append(nodeString)
+    result.append("(")
+    result.append(EOL)
+    result.append(leftString)
+    result.append(", ")
+    result.append(EOL)
+    result.append(centerString)
     result.append(", ")
     result.append(EOL)
     result.append(rightString)
