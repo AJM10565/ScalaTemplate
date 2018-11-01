@@ -7,7 +7,7 @@ object TestFixtures {
   val simple1string = "x=5;"
   val simple1  = Assignment(Variable("x"),Constant(5))
   val simple2string = "x = 5 ; y = 7;"
-  val simple2 = Assignment(Variable("x"),Constant(5)), Assignment(Variable("y"),Constant(7))
+  val simple2 = Assignment(Variable("x"),Constant(5)); Assignment(Variable("y"),Constant(7))
 
   val simple3string = "((1 + y2) - (3 * y4)) / 5;"
   val simple3 = Div(
