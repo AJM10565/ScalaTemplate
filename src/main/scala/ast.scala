@@ -13,9 +13,13 @@ case class Minus(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Times(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Div(left: Expr, right: Expr) extends BinaryExpr(left, right)
 case class Mod(left: Expr, right: Expr) extends BinaryExpr(left, right)
-case class Assignment(identifier: Expr, Assignedto: Expr)
-case class Loop(while_cond_part: Expr, while_exec_part: Expr)
+case class Assignment(left: Expr, right: Expr) extends BinaryExpr(left, right)
+case class Loop(left: Expr, right: Expr) extends BinaryExpr(left, right)
+
 abstract class TrinaryExpr(left: Expr, center: Expr, right: Expr) extends Expr { require { (left != null) && (center != null) } }
-case class Conditional(if_cond_part: Expr, if_exec_part: Expr, else_exec_part: Expr)
+case class Conditional(left: Expr, center: Expr, right: Expr) extends TrinaryExpr(left,center,right)
+
+
+
 abstract class iterExpr(items: Expr*) extends Expr { require(items != null, "Error: some shapes are null in this group") }
-case class Block(expr: Expr) extends iterExpr(expr)
+case class Block(items: Expr*) extends iterExpr(items: _*)
