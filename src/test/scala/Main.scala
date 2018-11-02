@@ -1,21 +1,21 @@
 package edu.luc.cs.laufer.cs473.expressions
 
 import org.scalatest.FunSuite
-
 import behaviors._
 import TestFixtures._
+import ast._
 
 object Main extends App {
-  println("p = " + complex1)
-  println("evaluate(p) = " + evaluate(complex1))
-  println("size(p) = " + size(complex1))
-  println("height(p) = " + height(complex1))
-  println(toFormattedString(complex1))
-  println("q = " + complex2)
-  println("evaluate(q) = " + evaluate(complex2))
-  println("size(q) = " + size(complex2))
-  println("height(q) = " + height(complex2))
-  println(toFormattedString(complex2))
+  TesttoFormattedString(simple1)
+
+  def TesttoFormattedString(expr: Expr) {
+    println("p = " + expr)
+    //println("evaluate(p) = " + evaluate(complex1))
+    //    println("size(p) = " + size(expr))
+    //    println("height(p) = " + height(expr))
+    println(toFormattedString(expr))
+
+  }
 }
 
 class Test extends FunSuite {
@@ -26,3 +26,4 @@ class Test extends FunSuite {
   test("size(q)") { assert(size(complex2) === 10) }
   test("height(q)") { assert(height(complex2) === 5) }
 }
+

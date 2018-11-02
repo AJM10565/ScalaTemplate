@@ -12,26 +12,26 @@ object CombinatorParser extends JavaTokenParsers {
   def assignment: Parser[Expr] =
     ident ~ "=" ~ expr ~ ";" ^^ {
       case i ~ "=" ~ e ~ ";" => Assignment(Variable(i), e)
-    } // TODO Q1: How do we not identify "if" as an ident? - Answered
+    }
   /** block ::= "{" statement* "}" */
   def block: Parser[Expr] =
     "{" ~ rep(statement) ~ "}" ^^ {
       case "{" ~ s ~ "}" => Block(s: _*)
-      // TODO Q2: Not really sure if we need Statement@_* or rep1(Statement) or something else to represent the group of statements in a block
+
     }
-  // TODO Q3 when to use !~ and when to use ~
+
   /** conditional ::= "if" "(" expression ")" block [ "else" block ]*/
   def conditional: Parser[Expr] =
     "if" ~ "(" ~ expr ~ ")" ~ block ~! opt("else" ~ block) ^^ {
       case "if" ~ "(" ~ e ~ ")" ~ b1 ~ None              => Conditional(e, b1, Block())
       case "if" ~ "(" ~ e ~ ")" ~ b1 ~ Some("else" ~ b2) => Conditional(e, b1, b2)
-    } // TODO Line 24 ~! b1 no error or ~ b1 with error
+    }
   /** loop  ::= "while" "(" expression ")" block */
   def loop: Parser[Expr] =
     "while" ~! "(" ~ expr ~ ")" ~ block ^^ {
       case "while" ~ "(" ~ e ~ ")" ~ b => Loop(e, b)
-    } // TODO Q4 What is the difference between: a) expression of type doesn't conform to expected type Expr and
-  // b) Type mismatch, Expected: Expr, actual: any
+    }
+
   /** statement   ::= expression ";" | assignment | conditional | loop | block */
   def statement: Parser[Expr] = (
     expr ~ ";" ^^ { case thing ~ _ => thing }
@@ -39,7 +39,7 @@ object CombinatorParser extends JavaTokenParsers {
     | conditional
     | loop
     | block
-  ) // TODO Help to Fix the red
+  )
   /** factor ::= wholeNumber   |"+" factor | "-" factor | "(" expr ")" */
   def factor: Parser[Expr] = (
     wholeNumber ^^ { case s => Constant(s.toInt) }

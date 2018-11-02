@@ -2,6 +2,7 @@ package edu.luc.cs.laufer.cs473.expressions
 
 import org.scalatest.FunSuite
 
+
 import TestFixtures._
 
 object MainCombinatorParser extends App {
