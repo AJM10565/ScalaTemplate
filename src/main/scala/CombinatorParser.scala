@@ -43,7 +43,7 @@ object CombinatorParser extends JavaTokenParsers {
   /** factor ::= wholeNumber   |"+" factor | "-" factor | "(" expr ")" */
   def factor: Parser[Expr] = (
     wholeNumber ^^ { case s => Constant(s.toInt) }
-    | ident ~> factor ^^ { case s => Variable(s.toString) }
+    | ident ^^ { case s => Variable(s.toString) }
     | "+" ~> factor ^^ { case e => e }
     | "-" ~> factor ^^ { case e => UMinus(e) }
     | "(" ~ expr ~ ")" ^^ { case _ ~ e ~ _ => e }

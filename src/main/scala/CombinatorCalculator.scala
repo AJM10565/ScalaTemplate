@@ -3,7 +3,6 @@ package edu.luc.cs.laufer.cs473.expressions
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.TerminalBuilder
 
-
 object CombinatorCalculator extends App {
 
   val terminal = TerminalBuilder.terminal
@@ -25,7 +24,14 @@ object CombinatorCalculator extends App {
       //      println("It evaluates to " + evaluate(expr))
     }
   }
-  reader.readLine(prompt)// needs a try catch
+
+  try {
+    reader.readLine(prompt)
+  } catch {
+    case e: Exception => e.printStackTrace()
+  }
+
+  // needs a try catch
   if (args.length > 0) {
     processExpr(args mkString " ")
   } else {
