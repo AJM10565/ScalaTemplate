@@ -51,12 +51,14 @@ object TestFixtures {
              Variable("x"),
               Constant(2)
            )
-         )
+
+         ),
+           Block()
        )
 
   val simple6string = "if (1) { x = 2; } else { x = 3; }"
    val simple6 =
-         TrinaryExpr(
+         Conditional(
            Constant(1),
            Block(
             Assignment(
@@ -79,7 +81,7 @@ object TestFixtures {
                  Variable("r"),
                  Variable("x")
            )
-         )
+         ),
            Assignment(
              Variable("y"),
               Plus(
@@ -99,14 +101,15 @@ object TestFixtures {
                  Variable("r"),
                  Variable("x")
             )
-          )
+          ),
       Assignment(
         Variable("y"),
          Plus(
           Variable("y"),
            Constant(1))
         )
-       )
+       ),
+           Block()
       )
 
   val simple9string = "while (y) { r = r + x; y = y - 1; }"
@@ -120,7 +123,7 @@ object TestFixtures {
               Variable("r"),
               Variable("x")
             )
-          )
+          ),
               Assignment(
                Variable("y"),
                 Minus(
@@ -131,8 +134,11 @@ object TestFixtures {
             )
           )
 
-//val simple10string = "while (y) { r = r + x ; y = y - 1 ;}"
-//val simple10 =
+//  val simple10string = "while (y) { r = r + x ; y = y - 1 ;}"
+//  val simple10 =
+
+    
+
 
   val complex1string = "((1 + 2) - (3 * 4)) / 5"
   val complex1 =
