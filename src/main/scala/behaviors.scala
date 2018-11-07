@@ -50,9 +50,9 @@ object behaviors {
     case Conditional(l, c, r) if !bool => buildtriExprString(prefix, "Conditional", toFormattedString(prefix + INDENT)(c)(bool), toFormattedString(prefix + INDENT)(l)(bool), toFormattedString(prefix + INDENT)(r)(bool))(bool)
     case Block(strings @ _*) if !bool  => build_infinite_ExprString(prefix, strings)(bool)
 
-    //        // bool is the "Pretty-Print" Style
-    //        case Constant (c)           if  bool     => prefix + c.toString
-    //        case Variable (value)       if  bool     => prefix + value
+    // bool is the "Pretty-Print" Style
+    case Constant(c) if bool           => prefix + c.toString
+    case Variable(value) if bool       => prefix + value
     //        case UMinus (r)             if  bool     => buildUnaryExprString (prefix, "UMinus", toFormattedString (prefix + INDENT) (r) )
     //        case Plus (l, r)            if  bool     => buildExprString (prefix, "Plus", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
     //        case Minus (l, r)           if  bool     => buildExprString (prefix, "Minus", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
@@ -62,17 +62,24 @@ object behaviors {
     //        case Assignment (l, r)      if  bool     => buildExprString (prefix, "Assignment", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
     //        case Loop (l, r)            if  bool     => buildExprString (prefix, "Loop", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
     //        case Conditional (l, c, r)  if  bool     => buildtriExprString (prefix, "Conditional", toFormattedString (prefix + INDENT) (c), toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
-    //        case Block (strings@_*)     if  bool     => build_infinite_ExprString (prefix, strings)
+    case Block(strings @ _*) if bool   => build_infinite_ExprString(prefix, strings)(bool)
 
   }
 
   def toFormattedString(e: Expr)(bool: Boolean): String = toFormattedString("")(e)(bool)
 
   def build_infinite_ExprString(prefix: String, nodeExprs: Seq[Expr])(bool: Boolean): String = {
-    val result = new StringBuilder(prefix)
-    val strings: Seq[String] = nodeExprs.map(expr => toFormattedString(prefix)(expr)(bool))
-    strings.foreach(string => result.append(string))
-    result.toString
+    if (!bool) {
+      val result = new StringBuilder(prefix)
+      val strings: Seq[String] = nodeExprs.map(expr => toFormattedString(prefix)(expr)(bool))
+      strings.foreach(string => result.append(string))
+      result.toString
+    } else {
+      val result = new StringBuilder(prefix)
+      val strings: Seq[String] = nodeExprs.map(expr => toFormattedString(prefix + "  ")(expr)(bool))
+      strings.foreach(string => result.append(string))
+      result.toString
+    }
   }
 
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String)(bool: Boolean) = {
