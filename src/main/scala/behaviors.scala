@@ -53,12 +53,12 @@ object behaviors {
     // bool is the "Pretty-Print" Style
     case Constant(c) if bool           => prefix + c.toString
     case Variable(value) if bool       => prefix + value
-    //        case UMinus (r)             if  bool     => buildUnaryExprString (prefix, "UMinus", toFormattedString (prefix + INDENT) (r) )
-    //        case Plus (l, r)            if  bool     => buildExprString (prefix, "Plus", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
-    //        case Minus (l, r)           if  bool     => buildExprString (prefix, "Minus", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
-    //        case Times (l, r)           if  bool     => buildExprString (prefix, "Times", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
-    //        case Div (l, r)             if  bool     => buildExprString (prefix, "Div", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
-    //        case Mod (l, r)             if  bool     => buildExprString (prefix, "Mod", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
+    case UMinus(r) if bool             => buildUnaryExprString(prefix, "-", toFormattedString(prefix)(r)(bool))(bool)
+    case Plus(l, r) if bool            => buildExprString(prefix, "+", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
+    case Minus(l, r) if bool           => buildExprString(prefix, "-", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
+    case Times(l, r) if bool           => buildExprString(prefix, "*", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
+    case Div(l, r) if bool             => buildExprString(prefix, "/", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
+    case Mod(l, r) if bool             => buildExprString(prefix, "%", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
     //        case Assignment (l, r)      if  bool     => buildExprString (prefix, "Assignment", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
     //        case Loop (l, r)            if  bool     => buildExprString (prefix, "Loop", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
     //        case Conditional (l, c, r)  if  bool     => buildtriExprString (prefix, "Conditional", toFormattedString (prefix + INDENT) (c), toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
@@ -84,14 +84,24 @@ object behaviors {
 
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String)(bool: Boolean) = {
     val result = new StringBuilder(prefix)
-    result.append(nodeString)
-    result.append("(")
-    result.append(EOL)
-    result.append(leftString)
-    result.append(", ")
-    result.append(EOL)
-    result.append(rightString)
-    result.append(")")
+    if (!bool) {
+      result.append(nodeString)
+      result.append("(")
+      result.append(EOL)
+      result.append(leftString)
+      result.append(", ")
+      result.append(EOL)
+      result.append(rightString)
+      result.append(")")
+    } else {
+      result.append(leftString)
+      result.append(prefix)
+      result.append(nodeString)
+      result.append(rightString)
+      result.append(";")
+
+    }
+
     result.toString
   }
   def buildtriExprString(prefix: String, nodeString: String, leftString: String, centerString: String, rightString: String)(bool: Boolean) = {
@@ -112,12 +122,26 @@ object behaviors {
 
   def buildUnaryExprString(prefix: String, nodeString: String, exprString: String)(bool: Boolean) = {
     val result = new StringBuilder(prefix)
-    result.append(nodeString)
-    result.append("(")
-    result.append(EOL)
-    result.append(exprString)
-    result.append(")")
+
+    if (!bool) {
+
+      result.append(nodeString)
+      result.append("(")
+      result.append(EOL)
+      result.append(exprString)
+      result.append(")")
+
+    } else {
+      result.append(nodeString)
+      // We don't need a ( because this isn't the ast
+      // Similarly we don't need an EOL
+      result.append(exprString)
+      // Similarly we don't need a )
+      result.append(";")
+
+    }
     result.toString
+
   }
 
   val EOL = scala.util.Properties.lineSeparator
