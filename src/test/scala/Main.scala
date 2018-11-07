@@ -13,7 +13,7 @@ object Main extends App {
     //println("evaluate(p) = " + evaluate(complex1))
     //    println("size(p) = " + size(expr))
     //    println("height(p) = " + height(expr))
-    println(toFormattedString(expr))
+    //    println(toFormattedString(expr))
 
   }
 }

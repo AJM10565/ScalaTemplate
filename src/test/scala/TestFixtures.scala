@@ -1,4 +1,4 @@
- package edu.luc.cs.laufer.cs473.expressions
+package edu.luc.cs.laufer.cs473.expressions
 
 object TestFixtures {
 
@@ -45,100 +45,102 @@ object TestFixtures {
 
   val simple5string = "if (1) { x = 2; }"
   val simple5 =
-         Conditional(Constant(1),
-          Block(
-           Assignment(
-             Variable("x"),
-              Constant(2)
-           )
+    Conditional(
+      Constant(1),
+      Block(
+        Assignment(
+          Variable("x"),
+          Constant(2)
+        )
 
-         ),
-           Block()
-       )
+      ),
+      Block()
+    )
 
   val simple6string = "if (1) { x = 2; } else { x = 3; }"
-   val simple6 =
-         Conditional(
-           Constant(1),
-           Block(
-            Assignment(
-            Variable("x"),
-            Constant(2))
-           ),
-           Block(
-             Assignment(
-             Variable("x"),
-             Constant(3))
-           )
-          )
+  val simple6 =
+    Conditional(
+      Constant(1),
+      Block(
+        Assignment(
+          Variable("x"),
+          Constant(2)
+        )
+      ),
+      Block(
+        Assignment(
+          Variable("x"),
+          Constant(3)
+        )
+      )
+    )
 
   val simple7string = "{ r = r + x; y = y + 1 ; }"
   val simple7 =
-          Block(
-            Assignment(
-              Variable("r"),
-               Plus(
-                 Variable("r"),
-                 Variable("x")
-           )
-         ),
-           Assignment(
-             Variable("y"),
-              Plus(
-                Variable("y"),
-                Constant(1))
-           )
-         )
+    Block(
+      Assignment(
+        Variable("r"),
+        Plus(
+          Variable("r"),
+          Variable("x")
+        )
+      ),
+      Assignment(
+        Variable("y"),
+        Plus(
+          Variable("y"),
+          Constant(1)
+        )
+      )
+    )
 
   val simple8string = "if (4) { r = r + x; y = y + 1; }"
   val simple8 =
-         Conditional(
-           Constant(4),
-            Block(
-              Assignment(
-              Variable("r"),
-               Plus(
-                 Variable("r"),
-                 Variable("x")
-            )
-          ),
-      Assignment(
-        Variable("y"),
-         Plus(
+    Conditional(
+      Constant(4),
+      Block(
+        Assignment(
+          Variable("r"),
+          Plus(
+            Variable("r"),
+            Variable("x")
+          )
+        ),
+        Assignment(
           Variable("y"),
-           Constant(1))
+          Plus(
+            Variable("y"),
+            Constant(1)
+          )
         )
-       ),
-           Block()
-      )
+      ),
+      Block()
+    )
 
   val simple9string = "while (y) { r = r + x; y = y - 1; }"
   val simple9 =
-       Loop(
-        Variable("y"),
-         Block(
-          Assignment(
-           Variable("r"),
-            Plus(
-              Variable("r"),
-              Variable("x")
-            )
-          ),
-              Assignment(
-               Variable("y"),
-                Minus(
-                  Variable("y"),
-                  Constant(1)
-                )
-              )
-            )
+    Loop(
+      Variable("y"),
+      Block(
+        Assignment(
+          Variable("r"),
+          Plus(
+            Variable("r"),
+            Variable("x")
           )
+        ),
+        Assignment(
+          Variable("y"),
+          Minus(
+            Variable("y"),
+            Constant(1)
+          )
+        )
+      )
+    )
 
-//  val simple10string = "while (y) { r = r + x ; y = y - 1 ;}"
-//  val simple10 =
-
-    
-
+  //  val simple10string = "while (y) { r = r + x ; y = y - 1 ;}"
+  //  val simple10 =
 
   val complex1string = "((1 + 2) - (3 * 4)) / 5"
   val complex1 =
