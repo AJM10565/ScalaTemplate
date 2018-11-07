@@ -59,7 +59,7 @@ object behaviors {
     case Times(l, r) if bool           => buildExprString(prefix, "*", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
     case Div(l, r) if bool             => buildExprString(prefix, "/", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
     case Mod(l, r) if bool             => buildExprString(prefix, "%", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
-    //        case Assignment (l, r)      if  bool     => buildExprString (prefix, "Assignment", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
+    case Assignment(l, r) if bool      => buildExprString(prefix, "=", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
     //        case Loop (l, r)            if  bool     => buildExprString (prefix, "Loop", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
     //        case Conditional (l, c, r)  if  bool     => buildtriExprString (prefix, "Conditional", toFormattedString (prefix + INDENT) (c), toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
     case Block(strings @ _*) if bool   => build_infinite_ExprString(prefix, strings)(bool)
@@ -69,17 +69,27 @@ object behaviors {
   def toFormattedString(e: Expr)(bool: Boolean): String = toFormattedString("")(e)(bool)
 
   def build_infinite_ExprString(prefix: String, nodeExprs: Seq[Expr])(bool: Boolean): String = {
+    val result = new StringBuilder(prefix)
+
     if (!bool) {
-      val result = new StringBuilder(prefix)
+
       val strings: Seq[String] = nodeExprs.map(expr => toFormattedString(prefix)(expr)(bool))
       strings.foreach(string => result.append(string))
-      result.toString
+
     } else {
-      val result = new StringBuilder(prefix)
+      result.append("{")
+      result.append(EOL)
       val strings: Seq[String] = nodeExprs.map(expr => toFormattedString(prefix + "  ")(expr)(bool))
-      strings.foreach(string => result.append(string))
-      result.toString
+
+      strings.foreach {
+        string =>
+          result.append(string)
+          result.append(EOL)
+      }
+      result.append("}")
+
     }
+    result.toString
   }
 
   def buildExprString(prefix: String, nodeString: String, leftString: String, rightString: String)(bool: Boolean) = {
