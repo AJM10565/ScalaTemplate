@@ -8,7 +8,7 @@ object CombinatorCalculator extends App {
   val terminal = TerminalBuilder.terminal
   val reader = LineReaderBuilder.builder.terminal(terminal).build
   val prompt = "myprompt> "
-
+  var store = behaviors.newstore
   def processExpr(input: String): Unit = {
     println("You entered: " + input)
     val result = CombinatorParser.parseAll(CombinatorParser.toplevel, input)
@@ -23,7 +23,7 @@ object CombinatorCalculator extends App {
       println(toFormattedString(expr)(true))
 
       // println("It has size " + size(expr) + " and height " + height(expr))
-      // println("It evaluates to " + evaluate(expr))
+      println("It evaluates to " +Execute(store)(expr))
     }
   }
 

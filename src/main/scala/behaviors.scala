@@ -1,19 +1,97 @@
 package edu.luc.cs.laufer.cs473.expressions
 
 import ast._
+import scala.util.{Failure, Success, Try}
+import scala.collection.mutable.{ Map => MutableMap }
 
 object behaviors {
 
-  def evaluate(e: Expr): Int = e match {
-    case Constant(c) => c
-    case UMinus(r)   => -evaluate(r)
-    case Plus(l, r)  => evaluate(l) + evaluate(r)
-    case Minus(l, r) => evaluate(l) - evaluate(r)
-    case Times(l, r) => evaluate(l) * evaluate(r)
-    case Div(l, r)   => evaluate(l) / evaluate(r)
-    case Mod(l, r)   => evaluate(l) % evaluate(r)
+  /** A object (instance) is a mapping from variable names to storage cells. */
+  type Instance = MutableMap[String, Value]
 
+  /** A memory store is a special top-level object (instance). */
+  type Store = Instance
+
+  /** A run-time value is always a number for now. We represent NULL as 0. */
+  sealed trait Value
+  case class Num(value: Int) extends Value
+
+  object Value {
+    val NULL = Num(0)
   }
+
+  /** The result of a successful or failed computation. */
+  type Result = Try[Value]
+
+
+
+  def newstore: Store = MutableMap.empty[String,Value]
+  object Execute {
+
+
+
+    def apply(store: Store)(s: Expr): Result = s match {
+      case Constant(value)    => Success(Num(value))
+      case UMinus(left)   => for{ l <-apply(store)(left)} yield Num(-l.asInstanceOf[Num].value)
+      case Plus(left, right)  => for{
+        l <-apply(store)(left)
+        r <- apply(store)(right)
+      } yield Num(l.asInstanceOf[Num].value + r.asInstanceOf[Num].value)
+      case Minus(left, right) => for{
+        l <-apply(store)(left)
+        r <- apply(store)(right)
+      } yield Num(l.asInstanceOf[Num].value - r.asInstanceOf[Num].value)
+      case Times(left, right) => for{
+        l <-apply(store)(left)
+        r <- apply(store)(right)
+      } yield Num(l.asInstanceOf[Num].value * r.asInstanceOf[Num].value)
+      case Div(left, right)   => for{
+        l <-apply(store)(left)
+        r <- apply(store)(right)
+      } yield Num(l.asInstanceOf[Num].value / r.asInstanceOf[Num].value)
+      case Mod(left, right)   => for{
+        l <-apply(store)(left)
+        r <- apply(store)(right)
+      } yield Num(l.asInstanceOf[Num].value % r.asInstanceOf[Num].value)
+
+      case Variable(name)     => Try(store(name))
+      case Assignment(left, right) =>
+        for {
+          rvalue <- apply(store)(right)
+        } yield {
+        store.put(left, rvalue)
+        Value.NULL
+      }
+      case Block(statements @ _*) =>
+        statements.foldLeft(Value.NULL.asInstanceOf[Value])((c, s) => apply(store)(s))
+      case Loop(guard, body) => {
+        var gvalue = apply(store)(guard)
+        while (gvalue.get != 0) {
+          apply(store)(body)
+          gvalue = apply(store)(guard)
+        }
+        Cell.NULL
+      }
+    }
+  }
+
+
+//  def evaluate(e: Expr): Value = e match {
+//    case Constant(c) => Num(c)
+//    case UMinus(r)   => -Num(evaluate(r))
+//    case Plus(l, r)  => evaluate(l) + evaluate(r)
+//    case Minus(l, r) => evaluate(l) - evaluate(r)
+//    case Times(l, r) => evaluate(l) * evaluate(r)
+//    case Div(l, r)   => evaluate(l) / evaluate(r)
+//    case Mod(l, r)   => evaluate(l) % evaluate(r)
+//    case Assignment(l, r)      =>{
+//    Value.Null
+//    }
+//    case Loop(l, r)            =>
+//    case Conditional(l, c, r)  =>
+//    case Block(exprs @ _*)   =>
+//
+//  }
 
   def size(e: Expr): Int = e match { // number of any type of nodes
     case Constant(c) => 1
