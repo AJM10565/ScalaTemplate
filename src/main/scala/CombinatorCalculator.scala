@@ -17,9 +17,9 @@ object CombinatorCalculator extends App {
     } else {
       import behaviors._
       val expr = result.get
-      println("The parsed expression is: ")
+      println("The parsed statements are: ")
       println(toFormattedString(expr)(false))
-      println("The unparsed expression is:")
+      println("The unparsed statements are:")
       println(toFormattedString(expr)(true))
 
       // println("It has size " + size(expr) + " and height " + height(expr))

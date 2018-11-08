@@ -12,6 +12,7 @@ object behaviors {
     case Times(l, r) => evaluate(l) * evaluate(r)
     case Div(l, r)   => evaluate(l) / evaluate(r)
     case Mod(l, r)   => evaluate(l) % evaluate(r)
+
   }
 
   def size(e: Expr): Int = e match { // number of any type of nodes
@@ -51,22 +52,33 @@ object behaviors {
     case Block(strings @ _*) if !bool  => build_infinite_ExprString(prefix, strings)(bool)
 
     // bool is the "Pretty-Print" Style
-    case Constant(c) if bool           => prefix + c.toString
-    case Variable(value) if bool       => prefix + value
-    case UMinus(r) if bool             => buildUnaryExprString(prefix, "-", toFormattedString(prefix)(r)(bool))(bool)
-    case Plus(l, r) if bool            => buildExprString(prefix, "+", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
-    case Minus(l, r) if bool           => buildExprString(prefix, "-", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
-    case Times(l, r) if bool           => buildExprString(prefix, "*", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
-    case Div(l, r) if bool             => buildExprString(prefix, "/", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
-    case Mod(l, r) if bool             => buildExprString(prefix, "%", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
-    case Assignment(l, r) if bool      => buildExprString(prefix, "=", toFormattedString(prefix)(l)(bool), toFormattedString(prefix)(r)(bool))(bool)
-    //        case Loop (l, r)            if  bool     => buildExprString (prefix, "Loop", toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
-    //        case Conditional (l, c, r)  if  bool     => buildtriExprString (prefix, "Conditional", toFormattedString (prefix + INDENT) (c), toFormattedString (prefix + INDENT) (l), toFormattedString (prefix + INDENT) (r) )
+    case Constant(c) if bool           => c.toString
+    case Variable(value) if bool       => value
+    case UMinus(r) if bool             => buildUnaryExprString("", "-", toFormattedString(prefix)(r)(bool))(bool)
+    case Plus(l, r) if bool            => buildExprString("", "+", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
+    case Minus(l, r) if bool           => buildExprString("", "-", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
+    case Times(l, r) if bool           => buildExprString("", "*", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
+    case Div(l, r) if bool             => buildExprString("", "/", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
+    case Mod(l, r) if bool             => buildExprString("", "%", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
+    case Assignment(l, r) if bool      => buildAssignString("", "=", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
+    case Loop(l, r) if bool            => buildwhileString("", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
+    case Conditional(l, c, r) if bool  => buildtriExprString("", "if", toFormattedString(prefix)(c)(bool), toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
     case Block(strings @ _*) if bool   => build_infinite_ExprString(prefix, strings)(bool)
 
   }
 
   def toFormattedString(e: Expr)(bool: Boolean): String = toFormattedString("")(e)(bool)
+
+  def buildwhileString(prefix: String, leftString: String, rightString: String)(bool: Boolean): String = {
+    val result = new StringBuilder(prefix)
+    result.append("while")
+    result.append("(")
+    result.append(leftString)
+    result.append(")")
+    result.append(prefix)
+    result.append(rightString)
+    result.toString
+  }
 
   def build_infinite_ExprString(prefix: String, nodeExprs: Seq[Expr])(bool: Boolean): String = {
     val result = new StringBuilder(prefix)
@@ -77,18 +89,34 @@ object behaviors {
       strings.foreach(string => result.append(string))
 
     } else {
+      var tabspace = prefix + "  "
+
       result.append("{")
       result.append(EOL)
-      val strings: Seq[String] = nodeExprs.map(expr => toFormattedString(prefix + "  ")(expr)(bool))
+
+      val strings: Seq[String] = nodeExprs.map(expr => toFormattedString(tabspace)(expr)(bool))
 
       strings.foreach {
         string =>
+          result.append(tabspace)
           result.append(string)
           result.append(EOL)
       }
+      result.append(prefix)
       result.append("}")
 
     }
+    result.toString
+  }
+
+  def buildAssignString(prefix: String, nodeString: String, leftString: String, rightString: String)(bool: Boolean) = {
+    val result = new StringBuilder(prefix)
+    result.append(leftString)
+    result.append(" ")
+    result.append(nodeString)
+    result.append(" ")
+    result.append(rightString)
+    result.append(";")
     result.toString
   }
 
@@ -104,11 +132,13 @@ object behaviors {
       result.append(rightString)
       result.append(")")
     } else {
+      result.append("(")
       result.append(leftString)
-      result.append(prefix)
+      result.append(" ")
       result.append(nodeString)
+      result.append(" ")
       result.append(rightString)
-      result.append(";")
+      result.append(")")
 
     }
 
@@ -116,17 +146,32 @@ object behaviors {
   }
   def buildtriExprString(prefix: String, nodeString: String, leftString: String, centerString: String, rightString: String)(bool: Boolean) = {
     val result = new StringBuilder(prefix)
-    result.append(nodeString)
-    result.append("(")
-    result.append(EOL)
-    result.append(leftString)
-    result.append(", ")
-    result.append(EOL)
-    result.append(centerString)
-    result.append(", ")
-    result.append(EOL)
-    result.append(rightString)
-    result.append(")")
+    if (!bool) {
+      result.append(nodeString)
+      result.append("(")
+      result.append(EOL)
+      result.append(leftString)
+      result.append(", ")
+      result.append(EOL)
+      result.append(centerString)
+      result.append(", ")
+      result.append(EOL)
+      result.append(rightString)
+      result.append(")")
+    } else {
+
+      result.append(nodeString)
+      result.append(" ")
+      result.append("(")
+      result.append(centerString)
+      result.append(")")
+      result.append(leftString)
+      result.append("else")
+
+      result.append(rightString)
+
+    }
+
     result.toString
   }
 
