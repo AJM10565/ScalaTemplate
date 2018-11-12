@@ -76,23 +76,65 @@ object behaviors {
 
       case Variable(name) => Try(store(name))
 
-      case Assignment(left, right) =>
-
-//        for {
-//          lvalue <- lookup(store)(left)
-//          rvalue <- right
-//          _ <- Success(lvalue.set(rvalue))
-//        } yield Value.NULL
-
+      case Assignment(left, right) => {
         for {
-
           rvalue <- apply(store)(right)
         } yield {
           store.put(left.asInstanceOf[String], rvalue) // changed to left.asInstanceof[String] still needs testing
           Value.NULL
         }
+      }
 
-      case Block(statements@_*) => statements.foldLeft(Value.NULL.asInstanceOf[Value])((c, s) => apply(store)(s))
+      case Block(statements@_*) => {
+
+        def doSequence(blockstatements: Seq[Expr]): Result ={
+        // Neither option gives the correct return type
+//          //Option #1
+//          statements.foldLeft(Value.NULL.asInstanceOf[Value])((c, s) => apply(store)(s))
+
+          //Option #2 copying pattern from https://github.com/lucproglangcourse/simpleimperative-algebraic-scala/blob/master/src/main/scala/evaluate.scala
+          val i = statements.iterator
+          var result = Value.NULL.asInstanceOf[Value]
+          while (i.hasNext) {
+            i.next( )
+            for { // Using the for to try and catch an error
+              statement_instance <- i.hasNext
+              executedstatementoutput <- apply(store)(statement_instance)
+            } yield {
+              Success(executedstatementoutput)
+              Value.NULL
+            }
+           }
+
+          }
+
+          doSequence(statements)
+
+        }
+
+
+
+
+
+
+
+
+//
+
+//      case Block(expressions) =>
+//        // TODO http://stackoverflow.com/questions/12892701/abort-early-in-a-fold
+//        def doSequence: Result = {
+//          val i = expressions.iterator
+//          var result: Cell = Cell.NULL
+//          while (i.hasNext) {
+//            i.next().eval match {
+//              case Success(r)     => result = r
+//              case f @ Failure(_) => return f
+//            }
+//          }
+//          Success(result)
+//        }
+//        thunk { doSequence }
 
 
       case Loop(guard, body) =>
@@ -101,7 +143,7 @@ object behaviors {
           apply(store)(body)
           gvalue = apply(store)(guard)
         }
-        Value.NULL
+        Success(Value.NULL) // Still Don't Understand why sometimes we use Success and sometimes not
 
 
     }
