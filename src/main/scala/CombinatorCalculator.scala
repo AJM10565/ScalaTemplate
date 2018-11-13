@@ -2,6 +2,7 @@ package edu.luc.cs.laufer.cs473.expressions
 
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.TerminalBuilder
+import scala.util.control.Breaks._
 
 import scala.util.{Failure, Success, Try}
 
@@ -35,16 +36,19 @@ object CombinatorCalculator extends App {
   if (args.length > 0) {
     processExpr(args mkString " ")
   } else {
-    var x = true
-    while (x) {
+    breakable {
 
-      try {
-        var in = reader.readLine(prompt)
-        processExpr(in)
-      } catch {
-        case _: Throwable => x = false
+      while (true) {
+
+        try {
+          var in = reader.readLine(prompt)
+          processExpr(in)
+        } catch {
+
+          case _: Throwable => break
+        }
+
       }
-
     }
 
   }
