@@ -11,7 +11,7 @@ object CombinatorParser extends JavaTokenParsers {
   /** assignment  ::= ident "=" expression ";"*/
   def assignment: Parser[Expr] =
     ident ~ "=" ~ expr ~ ";" ^^ {
-      case i ~ "=" ~ e ~ ";" => Assignment(Variable(i), e)
+      case i ~ "=" ~ e ~ ";" => Assignment(i, e)
     }
   /** block ::= "{" statement* "}" */
   def block: Parser[Expr] =

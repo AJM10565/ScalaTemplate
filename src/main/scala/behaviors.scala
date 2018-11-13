@@ -79,7 +79,7 @@ object behaviors {
         for {
           rvalue <- apply(store)(right)
         } yield {
-          store.put(left.toString, rvalue)
+          store.put(left, rvalue)
           Value.NULL
         }
       }
@@ -142,7 +142,7 @@ object behaviors {
     case Times(l, r) if !bool          => buildExprString(prefix, "Times", toFormattedString(prefix + INDENT)(l)(bool), toFormattedString(prefix + INDENT)(r)(bool))(bool)
     case Div(l, r) if !bool            => buildExprString(prefix, "Div", toFormattedString(prefix + INDENT)(l)(bool), toFormattedString(prefix + INDENT)(r)(bool))(bool)
     case Mod(l, r) if !bool            => buildExprString(prefix, "Mod", toFormattedString(prefix + INDENT)(l)(bool), toFormattedString(prefix + INDENT)(r)(bool))(bool)
-    case Assignment(l, r) if !bool     => buildExprString(prefix, "Assignment", toFormattedString(prefix + INDENT)(l)(bool), toFormattedString(prefix + INDENT)(r)(bool))(bool)
+    case Assignment(l, r) if !bool     => buildExprString(prefix, "Assignment", toFormattedString(prefix + INDENT)(Variable(l))(bool), toFormattedString(prefix + INDENT)(r)(bool))(bool)
     case Loop(l, r) if !bool           => buildExprString(prefix, "Loop", toFormattedString(prefix + INDENT)(l)(bool), toFormattedString(prefix + INDENT)(r)(bool))(bool)
     case Conditional(l, c, r) if !bool => buildtriExprString(prefix, "Conditional", toFormattedString(prefix + INDENT)(c)(bool), toFormattedString(prefix + INDENT)(l)(bool), toFormattedString(prefix + INDENT)(r)(bool))(bool)
     case Block(strings @ _*) if !bool  => build_infinite_ExprString(prefix, strings)(bool)
@@ -156,7 +156,7 @@ object behaviors {
     case Times(l, r) if bool           => buildExprString("", "*", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
     case Div(l, r) if bool             => buildExprString("", "/", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
     case Mod(l, r) if bool             => buildExprString("", "%", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
-    case Assignment(l, r) if bool      => buildAssignString("", "=", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
+    case Assignment(l, r) if bool      => buildAssignString("", "=", toFormattedString("")(Variable(l))(bool), toFormattedString("")(r)(bool))(bool)
     case Loop(l, r) if bool            => buildwhileString("", toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
     case Conditional(l, c, r) if bool  => buildtriExprString("", "if", toFormattedString(prefix)(c)(bool), toFormattedString("")(l)(bool), toFormattedString("")(r)(bool))(bool)
     case Block(strings @ _*) if bool   => build_infinite_ExprString(prefix, strings)(bool)

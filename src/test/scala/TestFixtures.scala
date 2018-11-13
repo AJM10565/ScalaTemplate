@@ -5,9 +5,9 @@ object TestFixtures {
   import ast._
 
   val simple1string = "x=5;"
-  val simple1 = Assignment(Variable("x"), Constant(5))
+  val simple1 = Assignment("x", Constant(5))
   val simple2string = "x = 5 ; y = 7;"
-  val simple2 = Assignment(Variable("x"), Constant(5)); Assignment(Variable("y"), Constant(7))
+  val simple2 = Assignment("x", Constant(5)); Assignment("y", Constant(7))
 
   val simple3string = "((1 + y2) - (3 * y4)) / 5;"
   val simple3 = Div(
@@ -27,7 +27,7 @@ object TestFixtures {
   val simple4string = "x = ((1 + y2) - (3 * y4)) / 5;"
   val simple4 =
     Assignment(
-      Variable("x"),
+      "x",
       Div(
         Minus(
           Plus(
@@ -49,7 +49,7 @@ object TestFixtures {
       Constant(1),
       Block(
         Assignment(
-          Variable("x"),
+          "x",
           Constant(2)
         )
 
@@ -63,13 +63,13 @@ object TestFixtures {
       Constant(1),
       Block(
         Assignment(
-          Variable("x"),
+          "x",
           Constant(2)
         )
       ),
       Block(
         Assignment(
-          Variable("x"),
+          "x",
           Constant(3)
         )
       )
@@ -79,14 +79,14 @@ object TestFixtures {
   val simple7 =
     Block(
       Assignment(
-        Variable("r"),
+        "r",
         Plus(
           Variable("r"),
           Variable("x")
         )
       ),
       Assignment(
-        Variable("y"),
+        "y",
         Plus(
           Variable("y"),
           Constant(1)
@@ -100,14 +100,14 @@ object TestFixtures {
       Constant(4),
       Block(
         Assignment(
-          Variable("r"),
+          "r",
           Plus(
             Variable("r"),
             Variable("x")
           )
         ),
         Assignment(
-          Variable("y"),
+          "y",
           Plus(
             Variable("y"),
             Constant(1)
@@ -123,14 +123,14 @@ object TestFixtures {
       Variable("y"),
       Block(
         Assignment(
-          Variable("r"),
+          "r",
           Plus(
             Variable("r"),
             Variable("x")
           )
         ),
         Assignment(
-          Variable("y"),
+          "y",
           Minus(
             Variable("y"),
             Constant(1)
