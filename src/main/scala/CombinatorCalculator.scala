@@ -3,13 +3,13 @@ package edu.luc.cs.laufer.cs473.expressions
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.TerminalBuilder
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 object CombinatorCalculator extends App {
 
   val terminal = TerminalBuilder.terminal
   val reader = LineReaderBuilder.builder.terminal(terminal).build
-  val prompt = "myprompt> "
+  val prompt = "Enter infix expression: "
 
   var store = behaviors.newstore
   def processExpr(input: String): Unit = {
@@ -31,17 +31,34 @@ object CombinatorCalculator extends App {
       println("Memory: " + store)
     }
   }
-
   // needs a try catch
   if (args.length > 0) {
     processExpr(args mkString " ")
   } else {
-    while (true) {
-      print("Enter infix expression: ")
-      var in = reader.readLine(prompt)
-      processExpr(in)
+    var x = true
+    while (x) {
+
+      try {
+        var in = reader.readLine(prompt)
+        processExpr(in)
+      } catch {
+        case _: Throwable => x = false
+      }
 
     }
 
   }
+
+  //  // needs a try catch
+  //  if (args.length > 0) {
+  //    processExpr(args mkString " ")
+  //  } else {
+  //    while (true) {
+  //      print("Enter infix expression: ")
+  //      var in = reader.readLine(prompt)
+  //      processExpr(in)
+  //
+  //    }
+  //
+  //  }
 }
