@@ -86,27 +86,34 @@ object behaviors {
 
       case Block(statements @ _*) => {
         //Copying pattern from https://github.com/lucproglangcourse/simpleimperative-algebraic-scala/blob/master/src/main/scala/evaluate.scala
-        def doSequence(blockstatements: Seq[Expr]): Result = {
-          val i = statements.iterator
-          var result = Value.NULL.asInstanceOf[Value]
-          while (i.hasNext) {
-            apply(store)(i.next()) match {
-              case Success(r)         => result = r
-              case Failure(exception) => return Failure(exception)
-            }
+
+        val i = statements.iterator
+        var result: Value = Value.NULL
+        while (i.hasNext) {
+          apply(store)(i.next()) match {
+            case Success(r)         => result = r
+            case Failure(exception) => return Failure(exception)
           }
-          Success(result)
         }
-        doSequence(statements)
+        Success(result)
       }
 
       case Loop(guard, body) =>
-        var gvalue = apply(store)(guard) // Evaluate the guard
-        while (gvalue.asInstanceOf[Int] != 0) {
-          apply(store)(body)
-          gvalue = apply(store)(guard)
+        var gvalue: Value = Value.NULL
+
+        apply(store)(guard) match {
+          case Success(g)         => gvalue = g
+          case Failure(exception) => return Failure(exception)
         }
-        Success(Value.NULL) // Still Don't Understand why sometimes we use Success and sometimes not
+        while (gvalue != Value.NULL) { // 0 means false, anything else means true
+          apply(store)(body)
+          // make one more iteration
+          apply(store)(guard) match {
+            case Success(g)         => gvalue = g
+            case Failure(exception) => return Failure(exception)
+          }
+        }
+        Success(Value.NULL)
 
     }
   }
