@@ -1,6 +1,7 @@
 package edu.luc.cs.laufer.cs473.expressions
 
 import ast._
+import edu.luc.cs.laufer.cs473.expressions.behaviors.Execute
 
 import scala.util.{Failure, Success, Try}
 import scala.collection.mutable.{Map => MutableMap}
@@ -89,14 +90,15 @@ object behaviors {
           val i = statements.iterator
           var result = Value.NULL.asInstanceOf[Value]
           while (i.hasNext) {
-            var statement_instance = i.next()
-            result = Num(apply(store)(statement_instance).asInstanceOf[Int])
+            apply(store)(i.next()) match {
+              case Success(r)         => result = r
+              case Failure(exception) => return Failure(exception)
+            }
           }
           Success(result)
         }
         doSequence(statements)
       }
-        
 
       case Loop(guard, body) =>
         var gvalue = apply(store)(guard) // Evaluate the guard
