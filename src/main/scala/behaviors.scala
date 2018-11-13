@@ -92,7 +92,7 @@ object behaviors {
         while (i.hasNext) {
           apply(store)(i.next()) match {
             case Success(r)         => result = r
-            case Failure(exception) => return Failure(exception)
+            case f @ Failure(exception) => return f
           }
         }
         Success(result)
@@ -103,17 +103,17 @@ object behaviors {
 
         apply(store)(guard) match {
           case Success(g)         => gvalue = g
-          case Failure(exception) => return Failure(exception)
+          case f @ Failure(exception) => return f
         }
         while (gvalue != Value.NULL) {
           apply(store)(body) match {
             case Success(g)         => Success(g)
-            case Failure(exception) => return Failure(exception)
+            case f @ Failure(exception) => return f
           }
 
           apply(store)(guard) match {
             case Success(g)         => gvalue = g
-            case Failure(exception) => return Failure(exception)
+            case f @ Failure(exception) => return f
           }
         }
         Success(Value.NULL)
@@ -122,7 +122,7 @@ object behaviors {
         apply(store)(guard) match {
           case Success(Value.NULL) => apply(store)(elseBranch)
           case Success(_)          => apply(store)(thenBranch)
-          case Failure(exception)  => return Failure(exception)
+          case f @ Failure(exception) => f
         }
       }
 
