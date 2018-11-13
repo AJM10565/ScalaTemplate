@@ -8,13 +8,6 @@ import scala.collection.mutable.{Map => MutableMap}
 
 object behaviors {
 
-  /** Unused Code Portion */
-  //  /** A cell (l-value) for storing a value. */
-  //  case class Cell(var value: Int) {
-  //    def get: Int = value
-  //    def set(value: Int): Cell = { this.value = value; this }
-  //  }
-
   /** A object (instance) is a mapping from variable names to storage cells. */
   type Instance = MutableMap[String, Value]
 
@@ -25,6 +18,7 @@ object behaviors {
   sealed trait Value
 
   case class Num(value: Int) extends Value
+  case class Ins(ins: Instance) extends Value
 
   /** A companion object defining a useful Value instance. */
   object Value {

@@ -3,11 +3,14 @@ package edu.luc.cs.laufer.cs473.expressions
 import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.TerminalBuilder
 
+import scala.util.Try
+
 object CombinatorCalculator extends App {
 
   val terminal = TerminalBuilder.terminal
   val reader = LineReaderBuilder.builder.terminal(terminal).build
   val prompt = "myprompt> "
+
   var store = behaviors.newstore
   def processExpr(input: String): Unit = {
     println("You entered: " + input)
@@ -29,20 +32,16 @@ object CombinatorCalculator extends App {
     }
   }
 
-  try {
-    reader.readLine(prompt)
-  } catch {
-    case e: Exception => e.printStackTrace()
-  }
-
   // needs a try catch
   if (args.length > 0) {
     processExpr(args mkString " ")
   } else {
-    print("Enter infix expression: ")
-    scala.io.Source.stdin.getLines foreach { line =>
-      processExpr(line)
+    while (true) {
       print("Enter infix expression: ")
+      var in = reader.readLine(prompt)
+      processExpr(in)
+
     }
+
   }
 }
