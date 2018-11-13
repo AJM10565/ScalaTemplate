@@ -84,11 +84,7 @@ object behaviors {
       }
 
       case Block(statements @ _*) => {
-        // Neither option gives the correct return type
-        //Option #1
-        //                statements.foldLeft(Value.NULL.asInstanceOf[Value]){(c, s) => apply(store)(s)}
-        //        Success(Num(Value.NULL.asInstanceOf[Int]))
-        //Option #2 copying pattern from https://github.com/lucproglangcourse/simpleimperative-algebraic-scala/blob/master/src/main/scala/evaluate.scala
+        //Copying pattern from https://github.com/lucproglangcourse/simpleimperative-algebraic-scala/blob/master/src/main/scala/evaluate.scala
         def doSequence(blockstatements: Seq[Expr]): Result = {
           val i = statements.iterator
           var result = Value.NULL.asInstanceOf[Value]
@@ -98,27 +94,9 @@ object behaviors {
           }
           Success(result)
         }
-
         doSequence(statements)
-
       }
-
-      //
-
-      //      case Block(expressions) =>
-      //        // TODO http://stackoverflow.com/questions/12892701/abort-early-in-a-fold
-      //        def doSequence: Result = {
-      //          val i = expressions.iterator
-      //          var result: Cell = Cell.NULL
-      //          while (i.hasNext) {
-      //            i.next().eval match {
-      //              case Success(r)     => result = r
-      //              case f @ Failure(_) => return f
-      //            }
-      //          }
-      //          Success(result)
-      //        }
-      //        thunk { doSequence }
+        
 
       case Loop(guard, body) =>
         var gvalue = apply(store)(guard) // Evaluate the guard
