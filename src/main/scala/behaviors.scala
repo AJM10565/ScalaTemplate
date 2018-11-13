@@ -106,7 +106,10 @@ object behaviors {
           case Failure(exception) => return Failure(exception)
         }
         while (gvalue != Value.NULL) {
-          apply(store)(body)
+          apply(store)(body) match {
+            case Success(g)         => Success(g)
+            case Failure(exception) => return Failure(exception)
+          }
 
           apply(store)(guard) match {
             case Success(g)         => gvalue = g
