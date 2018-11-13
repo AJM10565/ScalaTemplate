@@ -79,7 +79,7 @@ object behaviors {
         for {
           rvalue <- apply(store)(right)
         } yield {
-          store.put(left.asInstanceOf[String], rvalue) // changed to left.asInstanceof[String] still needs testing
+          store.put(left.toString, rvalue)
           Value.NULL
         }
       }
