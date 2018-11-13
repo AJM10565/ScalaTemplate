@@ -91,7 +91,7 @@ object behaviors {
         var result: Value = Value.NULL
         while (i.hasNext) {
           apply(store)(i.next()) match {
-            case Success(r)         => result = r
+            case Success(r)             => result = r
             case f @ Failure(exception) => return f
           }
         }
@@ -100,28 +100,23 @@ object behaviors {
 
       case Loop(guard, body) => {
         var gvalue: Value = Value.NULL
-
-        apply(store)(guard) match {
-          case Success(g)         => gvalue = g
-          case f @ Failure(exception) => return f
-        }
-        while (gvalue != Value.NULL) {
-          apply(store)(body) match {
-            case Success(g)         => Success(g)
-            case f @ Failure(exception) => return f
-          }
-
+        while (true) {
           apply(store)(guard) match {
-            case Success(g)         => gvalue = g
+            case Success(Value.NULL) => return Success(Value.NULL)
+            case Success(g) => apply(store)(body) match {
+              case Success(b)             => Success(b)
+              case f @ Failure(exception) => return f
+            }
             case f @ Failure(exception) => return f
           }
         }
         Success(Value.NULL)
       }
+
       case Conditional(guard, thenBranch, elseBranch) => {
         apply(store)(guard) match {
-          case Success(Value.NULL) => apply(store)(elseBranch)
-          case Success(_)          => apply(store)(thenBranch)
+          case Success(Value.NULL)    => apply(store)(elseBranch)
+          case Success(_)             => apply(store)(thenBranch)
           case f @ Failure(exception) => f
         }
       }
