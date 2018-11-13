@@ -98,22 +98,30 @@ object behaviors {
         Success(result)
       }
 
-      case Loop(guard, body) =>
+      case Loop(guard, body) => {
         var gvalue: Value = Value.NULL
 
         apply(store)(guard) match {
           case Success(g)         => gvalue = g
           case Failure(exception) => return Failure(exception)
         }
-        while (gvalue != Value.NULL) { // 0 means false, anything else means true
+        while (gvalue != Value.NULL) {
           apply(store)(body)
-          // make one more iteration
+
           apply(store)(guard) match {
             case Success(g)         => gvalue = g
             case Failure(exception) => return Failure(exception)
           }
         }
         Success(Value.NULL)
+      }
+      case Conditional(guard, thenBranch, elseBranch) => {
+        apply(store)(guard) match {
+          case Success(Value.NULL) => apply(store)(elseBranch)
+          case Success(_)          => apply(store)(thenBranch)
+          case Failure(exception)  => return Failure(exception)
+        }
+      }
 
     }
   }
