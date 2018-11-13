@@ -23,9 +23,9 @@ object CombinatorCalculator extends App {
       println(toFormattedString(expr)(true))
 
       // println("It has size " + size(expr) + " and height " + height(expr)) // Still Doesn't work
-      println("Memory:" + store)
-      println("It evaluates to " +Execute(store)(expr))
-      println("Memory:" + store)
+      println("Memory: " + store)
+      println("It evaluates to " + Execute(store)(expr))
+      println("Memory: " + store)
     }
   }
 
