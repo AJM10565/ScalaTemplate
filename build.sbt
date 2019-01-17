@@ -1,4 +1,4 @@
-name := "expressions-scala"
+name := "ScalaTemplate"
 
 version := "0.2"
 
